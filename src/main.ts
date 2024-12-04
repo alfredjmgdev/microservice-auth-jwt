@@ -8,6 +8,10 @@ async function bootstrap() {
   
   app.useGlobalPipes(new ValidationPipe());
 
+  app.enableCors({
+    origin: 'http://localhost:50889',
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Auth Microservice')
     .setDescription('Authentication API documentation')
