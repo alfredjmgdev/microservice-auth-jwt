@@ -23,5 +23,5 @@ services:
       - "traefik.http.routers.microservices-general-auth-secure.rule=Host(`microservices-general-auth.alfredjmg.dev`)"
       - "traefik.http.routers.microservices-general-auth-secure.tls=true"
       - "traefik.http.routers.microservices-general-auth-secure.service=microservices-general-auth"
-      - "traefik.http.services.microservices-general-auth.loadbalancer.server.port=8080"
+      - "traefik.http.services.microservices-general-auth.loadbalancer.server.port=3005"
       - "traefik.docker.network=dev"
