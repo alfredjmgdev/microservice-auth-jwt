@@ -7,10 +7,10 @@ COPY package*.json ./
 COPY . .
 
 # Install dependencies and build
-RUN npm install && npm run build
+RUN yarn install && yarn build
 
 # Expose port 3005
 EXPOSE 3005
 
 # Start the application
-CMD ["npm", "run", "start:prod"] 
+CMD ["yarn", "start:prod"] 
