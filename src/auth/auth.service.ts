@@ -52,15 +52,14 @@ export class AuthService {
     console.log(user)
 
     if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(['Invalid credentials']);
     }
 
     if (!user.isEmailVerified) {
-      throw new UnauthorizedException('Please verify your email first');
+      throw new UnauthorizedException(['Please verify your email first']);
     }
 
     const payload = { sub: user.id, email: user.email };
-    console.log(payload)
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
@@ -72,7 +71,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new BadRequestException(['User not found']);
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
