@@ -18,7 +18,7 @@ export class EmailService {
   }
 
   async sendVerificationEmail(email: string, token: string) {
-    const verificationLink = `${process.env.APP_URL}/auth/verify-email?token=${token}`;
+    const verificationLink = `${process.env.APP_URL}/auth/verify-email/token=${token}`;
     
     await this.transporter.sendMail({
       from: process.env.SMTP_FROM,

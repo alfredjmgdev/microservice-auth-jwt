@@ -22,7 +22,6 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, description: 'User successfully logged in' })
   login(@Body() loginDto: LoginDto) {
-    console.log('entre')
     return this.authService.login(loginDto);
   }
 
