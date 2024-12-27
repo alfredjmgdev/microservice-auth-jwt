@@ -26,7 +26,11 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new BadRequestException('Email already exists');
+      throw new BadRequestException({
+        message: ['Email already exists'],
+        error: 'Bad Request',
+        statusCode: 400,
+      });
     }
 
     const hashedPassword = await bcrypt.hash(signupDto.password, 10);
@@ -41,7 +45,11 @@ export class AuthService {
     await this.usersRepository.save(user);
     await this.emailService.sendVerificationEmail(user.email, verificationToken);
 
-    return { message: 'User created successfully. Please verify your email.' };
+    return {
+      message: ['User created successfully. Please verify your email.'],
+      error: null,
+      statusCode: 201,
+    };
   }
 
   async login(loginDto: LoginDto) {
@@ -52,16 +60,29 @@ export class AuthService {
     console.log(user)
 
     if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
-      throw new UnauthorizedException(['Invalid credentials']);
+      throw new UnauthorizedException({
+        message: ['Invalid credentials'],
+        error: 'Unauthorized',
+        statusCode: 401,
+      });
     }
 
     if (!user.isEmailVerified) {
-      throw new UnauthorizedException(['Please verify your email first']);
+      throw new UnauthorizedException({
+        message: ['Please verify your email first'],
+        error: 'Unauthorized',
+        statusCode: 401,
+      });
     }
 
     const payload = { sub: user.id, email: user.email };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      message: ['Login successful'],
+      error: null,
+      statusCode: 201,
+      data: {
+        access_token: await this.jwtService.signAsync(payload),
+      },
     };
   }
 
@@ -71,7 +92,11 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException(['User not found']);
+      throw new BadRequestException({
+        message: ['User not found'],
+        error: 'Bad Request',
+        statusCode: 400,
+      });
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
@@ -83,7 +108,11 @@ export class AuthService {
 
     await this.emailService.sendPasswordResetEmail(user.email, resetToken);
 
-    return { message: 'Password reset email sent' };
+    return {
+      message: ['Password reset email sent'],
+      error: null,
+      statusCode: 200,
+    };
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
@@ -95,7 +124,11 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('Invalid or expired reset token');
+      throw new BadRequestException({
+        message: ['Invalid or expired reset token'],
+        error: 'Bad Request',
+        statusCode: 400,
+      });
     }
 
     user.password = await bcrypt.hash(resetPasswordDto.newPassword, 10);
@@ -103,7 +136,11 @@ export class AuthService {
     user.passwordResetExpires = null;
     await this.usersRepository.save(user);
 
-    return { message: 'Password reset successful' };
+    return {
+      message: ['Password reset successful'],
+      error: null,
+      statusCode: 200,
+    };
   }
 
   async verifyEmail(token: string) {
@@ -112,13 +149,21 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('Invalid verification token');
+      throw new BadRequestException({
+        message: ['Invalid verification token'],
+        error: 'Bad Request',
+        statusCode: 400,
+      });
     }
 
     user.isEmailVerified = true;
     user.emailVerificationToken = null;
     await this.usersRepository.save(user);
 
-    return { message: 'Email verified successfully' };
+    return {
+      message: ['Email verified successfully'],
+      error: null,
+      statusCode: 200,
+    };
   }
 } 
